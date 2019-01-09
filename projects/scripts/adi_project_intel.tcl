@@ -21,6 +21,13 @@ proc adi_project {project_name {parameter_list {}}} {
   global version
   global quartus
 
+  # check $ALT_NIOS_MMU_ENABLED environment variables
+
+  set mmu_enabled 1
+  if [info exists ::env(ALT_NIOS_MMU_ENABLED)] {
+    set mmu_enabled $::env(ALT_NIOS_MMU_ENABLED)
+  }
+
   if [regexp "_a10gx$" $project_name] {
     set family "Arria 10"
     set device 10AX115S2F45I1SG
@@ -109,7 +116,6 @@ proc adi_project {project_name {parameter_list {}}} {
   puts $QFILE "save_system {system_bd.qsys}"
   close $QFILE
 
-  # create a new qsys design with command-line utilities
   exec -ignorestderr $quartus(quartus_rootpath)/sopc_builder/bin/qsys-script \
     --quartus_project=$project_name --script=system_qsys_script.tcl
 
