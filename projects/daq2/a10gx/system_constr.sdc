@@ -17,5 +17,6 @@ set_output_delay  -clock [ get_clocks sys_clk_100mhz ] 2   [ get_ports {flash_ce
 set_output_delay  -clock [ get_clocks sys_clk_100mhz ] 2   [ get_ports {flash_oen} ]
 set_output_delay  -clock [ get_clocks sys_clk_100mhz ] 2   [ get_ports {flash_resetn} ]
 set_output_delay  -clock [ get_clocks sys_clk_100mhz ] 2   [ get_ports {flash_wen} ]
+
 set_false_path    -from * -to [get_ports {flash_resetn}]
 

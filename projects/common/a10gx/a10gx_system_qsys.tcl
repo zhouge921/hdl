@@ -78,6 +78,13 @@ set_interface_property sys_ddr3_cntrl_mem EXPORT_OF sys_ddr3_cntrl.mem
 set_interface_property sys_ddr3_cntrl_oct EXPORT_OF sys_ddr3_cntrl.oct
 set_interface_property sys_ddr3_cntrl_pll_ref_clk EXPORT_OF sys_ddr3_cntrl.pll_ref_clk
 
+# load_component sys_ddr3_cntrl
+# set comp_param [get_component_parameters]
+# set_instantiation_interface_port_property emif_usr_reset_n emif_usr_reset_n associatedClock emif_usr_clk
+# set_instantiation_interface_port_property emif_usr_reset_n emif_usr_reset_n resetSynchronousEdges {DEASSERT}
+# save_component sys_ddr3_cntrl
+# sync_sysinfo_parameters sys_ddr3_cntrl
+
 # flash bridge
 
 add_instance sys_flash_bridge altera_tristate_conduit_bridge
@@ -176,7 +183,7 @@ set_instance_parameter_value sys_cpu {mmu_autoAssignTlbPtrSz} {0}
 set_instance_parameter_value sys_cpu {mmu_TLBMissExcOffset} {4096}
 set_instance_parameter_value sys_cpu {resetSlave} {sys_flash.uas}
 set_instance_parameter_value sys_cpu {mmu_TLBMissExcSlave} {sys_tlb_mem.s2}
-set_instance_parameter_value sys_cpu {exceptionSlave} {sys_ddr3_cntrl_arch.ctrl_amm_0}
+set_instance_parameter_value sys_cpu {exceptionSlave} {sys_ddr3_cntrl.ctrl_amm_0}
 set_instance_parameter_value sys_cpu {breakSlave} {sys_cpu.jtag_debug_module}
 set_instance_parameter_value sys_cpu {mul_32_impl} {3}
 set_instance_parameter_value sys_cpu {shift_rot_impl} {0}
@@ -223,6 +230,9 @@ add_connection sys_cpu.instruction_master mm_ccb_sys_cpu.s0
 add_connection sys_ddr3_cntrl.emif_usr_clk mm_ccb_sys_cpu.m0_clk
 add_connection sys_ddr3_cntrl.emif_usr_reset_n mm_ccb_sys_cpu.m0_reset
 add_connection  mm_ccb_sys_cpu.m0 sys_ddr3_cntrl.ctrl_amm_0
+set_connection_parameter_value sys_cpu.data_master/mm_ccb_sys_cpu.s0 baseAddress {0x0}
+set_connection_parameter_value sys_cpu.instruction_master/mm_ccb_sys_cpu.s0 baseAddress {0x0}
+set_connection_parameter_value mm_ccb_sys_cpu.m0/sys_ddr3_cntrl.ctrl_amm_0 baseAddress {0x0}
 
 # cpu/hps handling
 
@@ -423,6 +433,9 @@ add_connection sys_ethernet_dma_tx.mm_read mm_ccb_ethernet_txrx.s0
 add_connection sys_ddr3_cntrl.emif_usr_clk mm_ccb_ethernet_txrx.m0_clk
 add_connection sys_ddr3_cntrl.emif_usr_reset_n mm_ccb_ethernet_txrx.m0_reset
 add_connection mm_ccb_ethernet_txrx.m0 sys_ddr3_cntrl.ctrl_amm_0
+set_connection_parameter_value sys_ethernet_dma_rx.mm_write/mm_ccb_ethernet_txrx.s0 baseAddress {0x0}
+set_connection_parameter_value sys_ethernet_dma_tx.mm_read/mm_ccb_ethernet_txrx.s0 baseAddress {0x0}
+set_connection_parameter_value mm_ccb_ethernet_txrx.m0/sys_ddr3_cntrl.ctrl_amm_0 baseAddress {0x0}
 
 # interrupts
 
